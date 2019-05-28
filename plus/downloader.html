@@ -1,0 +1,131 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+		<meta name="HandheldFriendly" content="true"/>
+        <!-- 微软老式浏览器 -->
+		<meta name="MobileOptimized" content="320"/>
+		<title>Hello H5+</title>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script type="text/javascript">
+/*
+下载任务创建
+ */
+var dtask=null;//創建下載對象
+function createDownloadTask(){
+    debugger;
+	if ( dtask ) {
+		outLine( "下载任务已创建！" );
+		return;
+	}
+    var url = "http://snip.qq.com/resources/Snip_V2.0_5771.dmg";
+    var options = {method:"GET"};
+	dtask = plus.downloader.createDownload( url, options );
+    dtask.addEventListener( "statechanged", function(task,status){
+        console.log(task);   //  需要加载h5中的plus
+    	if(!dtask){return;}
+    	switch(task.state) {
+    		case 1: // 开始
+    			outLine( "开始下载..." );
+    		break;
+    		case 2: // 已连接到服务器
+    			outLine( "链接到服务器..." );
+    		break;
+    		case 3:	// 已接收到数据
+    			outSet( "下载数据更新:" );
+    			outLine( task.downloadedSize+"/"+task.totalSize );
+    		break;
+    		case 4:	// 下载完成
+    			outSet( "下载完成！" );
+    			outLine( task.totalSize );
+    		break;
+    	}
+    } );
+    outSet( "创建下载任务成功！" );
+}
+
+
+
+/**
+ * plus.downloader.createDownload( wgtUrl, {filename:"_doc/update/"}, function(d,status){ }
+ * 函數中  url表示需要下載的文件的地址
+ * options中包含的屬性非常多，對象形式,例如:{method,'get'};（ 1.method 請求類型   支持http協議中的 get post，默認get請求
+ *                             2.data  string類型 post請求時提交的數據 僅在metho為post時有效，請求為get時忽略此數據
+ *                             3.filename為下載文件保存到地址，默認文件下載地址默認以 _doc/,  _documents/,_download/   開頭
+ *                             4.priority number類型     下載任務優先級  默認值為0  優先級越高數值越大
+ *                             5.timeout  超時時間  默認120s    此時間為服務器相應請求時間  設置為0則永不超時 number類型
+ *                             6.retry  嘗試次數  默認為3次   嘗試下載任務次數  number類型
+ *
+ * downloader 方法：
+ *                     clear()  清除任務
+ *                     startAll() 開始所有任務
+ *                                       ）
+ */
+/*
+browserser瀏覽器對象 調用BrowserFunction類方法   BrowserFunction
+
+BrowserFunction  的構造函數  BrowserFunction(browser:Browser, name:String)，browser 是瀏覽器對象  name 綁定一個瀏覽器的javascript的方法
+ */
+
+
+
+/*
+启动下载人任务
+ */
+function startDownloadTask(){
+	if ( !dtask ) {//dtask=null
+		outSet( "请先创建下载任务！" );
+		return;
+	}
+
+    //dtask對象的方法  start() 開始下載任務
+	dtask.start();
+}
+// 暂停下载任务
+function pauseDownloadTask(){
+    dtask.pause();
+    outSet( "暂停下载！" );
+}
+// 恢复下载任务
+function resumeDownloadTask(){
+    dtask.resume();//重新下載
+    outSet( "恢复下载！" );
+}
+function cancelDownloadTask(){
+	dtask.abort();
+	dtask = null;
+	outSet( "取消下载任务！" );
+}
+function clearDownloadTask(){
+
+}
+function startAll(){
+	plus.downloader.startAll();
+}
+		</script>
+		<link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8"/>
+	</head>
+	<body>
+		<header id="header">
+			<div class="nvbt iback" onclick="back(true);"></div>
+			<div class="nvtt">Downloader</div>
+			<div class="nvbt idoc" onclick="openDoc('Downloader Document','/doc/downloader.html')"></div>
+		</header>
+		<div id="dcontent" class="dcontent">
+			<br/>
+			<ul class="dlist">
+				<li class="ditem" onclick="createDownloadTask();">创建下载任务</li>
+				<li class="ditem" onclick="startDownloadTask();">启动下载任务</li>
+				<li class="ditem" onclick="pauseDownloadTask();">暂停下载任务</li>
+				<li class="ditem" onclick="resumeDownloadTask();">恢复下载任务</li>
+				<li class="ditem" onclick="cancelDownloadTask();">取消下载任务</li>
+				<!--<li class="ditem" onclick="clearDownloadTask();">清除所有任务</li>-->
+			</ul>
+		</div>
+		<div id="output">
+            Downloader用于管理文件的下载，可从网络下载各种文件，并支持跨域访问。
+		</div>
+	</body>
+	<script type="text/javascript" src="../js/immersed.js" ></script>
+</html>
